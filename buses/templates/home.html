@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Management System 🚍</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Full-Screen Background Image */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            width: 100vw;
+            text-align: center;
+            background-image: url('https://ekamobility.com/wp-content/uploads/2025/01/Coach_Road-copy-scaled.jpg');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Header Background Box */
+        header {
+            width: 100%;
+            background: #010100b3; /* Semi-transparent black background */
+            color: #ffffff;
+            padding: 9px 5%; /* Reduced padding to move the header up */
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+
+        h1 {
+            background: linear-gradient(90deg, hwb(240 97% 2%), hsl(240, 43%, 99%));
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Rectangular Box for Tabs (Buttons) */
+        .tabs-container {
+            position: absolute;
+            top: 15%; /* Positioned below the header */
+            left: 5%;
+            right: 5%;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            z-index: 2;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 22px;
+            text-decoration: none;
+            background: rgb(0, 0, 255);
+            color: white;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: rgba(0, 238, 255, 0.5);
+            transform: scale(1.05);
+            box-shadow: 0px 0px 30px rgba(0, 238, 255, 0.8);
+        }
+
+        /* Left-center stats box */
+        .stats-box {
+            position: absolute;
+            top: 30%; /* Position slightly lower than the title */
+            left: 2%; /* Align to the left-center */
+            background: rgba(11, 11, 11, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            width: 400px;
+            color: #f3f7f7;
+            z-index: 5;
+        }
+
+        .stat-item {
+            font-size: 30px;
+            margin: 10px 0;
+        }
+
+        .stat-item strong {
+            font-weight: bold;
+        }
+
+        /* Search Section */
+        .search-container {
+            position: absolute;
+            top: 28%; /* Adjust search position */
+            right: 3%; /* Move search to the right side */
+            width: 300px;
+            z-index: 3;
+        }
+
+        .search-container input, .search-container button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        #message {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: rgb(18, 10, 246);
+        }
+
+        /* Responsive Fix */
+        @media (max-width: 600px) {
+            header {
+                padding: 20px 5%;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .stats-box {
+                width: 250px;
+                left: 50%;
+                transform: translateX(50%);
+            }
+
+            .tabs-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .search-container {
+                position: relative;
+                top: 15%; /* Adjust search position on small screens */
+                right: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with Title -->
+    <header>
+        <h1>Bus Management System</h1>
+    </header>
+
+    <!-- Rectangular Box for Tabs (Buttons) -->
+    <div class="tabs-container">
+        <a href="/buses/" class="btn">View All Buses</a>
+        <a href="/buses/register/" class="btn">Register a Bus</a>
+        <a href="/track-bus-location/" class="btn">Track Bus Locations</a>
+        <a href="/buses/location/" class="btn">Submit Bus Location</a>
+        <a href="/admin/" class="btn">Admin Panel</a>
+    </div>
+
+    <!-- Bus Stats Box on Left Center -->
+    <div class="stats-box">
+        <div class="stat-item"><strong>Total Buses:</strong> <span id="total-buses">Loading...</span></div>
+        <div class="stat-item"><strong>Active Buses:</strong> <span id="active-buses">Loading...</span></div>
+        <div class="stat-item"><strong>Inactive Buses:</strong> <span id="inactive-buses">Loading...</span></div>
+        <div class="stat-item"><strong>Maintenance Buses:</strong> <span id="maintenance-buses">Loading...</span></div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search Bus by Name">
+        <button id="search-btn" onclick="checkBusAvailability()">Search</button>
+        <div id="message"></div>
+    </div>
+
+    <!-- JavaScript to check bus availability -->
+    <script>
+        // Fetch bus statistics from the backend
+        function fetchBusStats() {
+            fetch('/api/bus/stats/')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the stats on the page with the data from the API
+                    document.getElementById('total-buses').innerText = data.total_buses;
+                    document.getElementById('active-buses').innerText = data.active_buses;
+                    document.getElementById('inactive-buses').innerText = data.inactive_buses;
+                    document.getElementById('maintenance-buses').innerText = data.maintenance_buses;
+                })
+                .catch(error => {
+                    console.error('Error fetching bus stats:', error);
+                });
+        }
+
+        // Initial call to fetch bus stats on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            fetchBusStats();
+        });
+// Function to check bus availability based on search input
+function checkBusAvailability() {
+    // Get the search term from the input field
+    const searchValue = document.getElementById('search').value.trim().toLowerCase();
+
+    // Ensure the search value is not empty
+    if (!searchValue) {
+        document.getElementById('message').innerHTML = "Please enter a bus name or route number.";
+        return;
+    }
+
+    // Send the search data to the backend using fetch API
+    fetch(`/api/buses/filter-buses/?search=${searchValue}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())  // Parse JSON response
+    .then(data => {
+        if (data.available) {
+            document.getElementById('message').innerHTML = `Bus '${searchValue}' is available!`;
+            document.getElementById('message').style.color = 'white';
+        } else {
+            document.getElementById('message').innerHTML = `Bus '${searchValue}' is not available.`;
+            document.getElementById('message').style.color = 'red';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching bus data:', error);
+        document.getElementById('message').innerHTML = "An error occurred. Please try again.";
+        document.getElementById('message').style.color = 'red';
+    });
+}
+
+        
+        
+    </script>
+
+</body>
+</html>

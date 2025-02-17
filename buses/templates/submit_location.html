@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Bus Location</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-image: url('https://ekamobility.com/wp-content/uploads/2025/01/EKA-Products_Page-08-scaled-1.jpg');
+            background-size: cover;
+            background-position: center center;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Form Container */
+        .container {
+            background: hwb(189 85% 12% / 0.949);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 30px rgba(0, 223, 243, 0.953);
+            width: 90%;
+            max-width: 450px;
+            color: white;
+            transform: translateX(500px); /* Moves the form left by 20px */
+        }
+
+        h1 {
+            font-size: 35px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: hwb(0 4% 7%);
+        }
+
+        /* Success Message Styling */
+        .success-message {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 20px;
+            margin: 10px 0 5px;
+            display: block;
+            text-align: left;
+            width: 100%;
+            font-weight: bold;
+            color: #f70911;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #f3f2f2f2;
+            color: rgba(15, 15, 15, 0.862);
+            font-size: 20px;
+            transition: all 0.3s ease-in-out;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #121111e6;
+        }
+
+        input:focus {
+            background: #f4f2f2fe;
+            transform: scale(1.05);
+        }
+
+        /* Submit Button */
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #08eafaf3;
+            color: #f50707;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 0px 20px rgba(3, 203, 217, 0.5);
+        }
+
+        .btn:hover {
+            background: #03dfeff7;
+            transform: scale(1.1);
+            box-shadow: 0px 0px 30px rgba(0, 238, 255, 0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📍 Submit Bus Location</h1>
+
+        <!-- Display the success message if it's available -->
+        {% if messages %}
+            <div class="success-message">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="/buses/location/">
+            {% csrf_token %}
+            <label>Bus ID:</label>
+            <input type="number" name="bus" placeholder="Enter Bus ID" required>
+
+            <label>Latitude:</label>
+            <input type="text" name="latitude" placeholder="Enter Latitude" required>
+
+            <label>Longitude:</label>
+            <input type="text" name="longitude" placeholder="Enter Longitude" required>
+
+            <button type="submit" class="btn">📌 Submit Location</button>
+        </form>
+    </div>
+
+</body>
+</html>

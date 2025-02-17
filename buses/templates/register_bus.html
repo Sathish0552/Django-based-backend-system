@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register a Bus</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            height: 100vh;
+            text-align: left;
+            background: url('https://ekamobility.com/wp-content/uploads/2025/01/EKA-Products_Page-08-scaled-1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            padding: 40px;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 450px;
+            color: white;
+            text-align: left;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #00eaff;
+            
+            text-align: left;
+            font-weight: bold;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 22px;
+            margin: 10px 0 5px;
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            color: white;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus, select:focus {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #07dbeaf4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 26px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 0px 20px rgba(0, 238, 255, 0.5);
+        }
+
+        .btn:hover {
+            background: rgba(0, 238, 255, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0px 0px 30px rgba(0, 238, 255, 0.8);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            display: none; /* Hidden initially */
+        }
+
+        .success {
+            background: rgba(0, 238, 255, 0.2);
+            color: white;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Register a Bus</h1>
+
+        <!-- Success or Error message after form submission -->
+        <div id="message" class="message"></div>
+
+        <form id="busForm" method="POST">
+            {% csrf_token %}
+            <label>Bus Name:</label>
+            <input type="text" name="name" id="name" placeholder="Enter bus name" required>
+            
+            <label>Route Number:</label>
+            <input type="text" name="route_number" id="route_number" placeholder="Enter route number" required>
+            
+            <label>Status:</label>
+            <select name="status" id="status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="maintenance">Maintenance</option>
+            </select>
+            
+            <button type="submit" class="btn">🚀 Register Bus</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('busForm');
+const messageDiv = document.getElementById('message');
+
+// Handling form submission
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();  // Prevent form from reloading the page
+
+    const formData = new FormData(form); // Collect form data
+
+    try {
+        const response = await fetch('/buses/register/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // CSRF token
+            }
+        });
+
+        const data = await response.json();  // Parse response as JSON
+
+        // Check if response indicates success
+        if (data.success) {
+            messageDiv.textContent = data.message || 'Bus registered successfully!';
+            messageDiv.className = 'message success'; // Apply success class for styling
+            messageDiv.style.display = 'block';  // Show success message
+            form.reset();  // Clear form fields after successful submission
+        } else {
+            // If not success, display the error message from backend
+            messageDiv.textContent = data.message || 'There was an error. Please try again.';
+            messageDiv.className = 'message error';  // Apply error class for styling
+            messageDiv.style.display = 'block';  // Show error message
+        }
+    } catch (error) {
+        console.error('There was an error with the request:', error);
+        messageDiv.textContent = 'There was an error. Please try again.';
+        messageDiv.className = 'message error';
+        messageDiv.style.display = 'block';
+    }
+});
+
+
+    </script>
+
+</body>
+</html>

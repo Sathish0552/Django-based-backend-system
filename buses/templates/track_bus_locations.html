@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Bus Location</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Body Styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-image: url('https://ekamobility.com/wp-content/uploads/2025/01/7M_Bus_raod.jpg');
+            background-size: cover;
+            background-position: center center;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Form Container */
+        .container {
+            background: hwb(189 85% 12% / 0.949); /* Semi-transparent background */
+            backdrop-filter: blur(12px); /* Apply the blur effect */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 30px rgba(0, 223, 243, 0.953);
+            width: 90%;
+            max-width: 450px;
+            color: white;
+            transform: translateX(500px);
+        }
+
+        h1 {
+            font-size: 35px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: hwb(0 4% 7%);
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 20px;
+            margin: 10px 0 5px;
+            display: block;
+            text-align: left;
+            width: 100%;
+            font-weight: bold;
+            color: #f70911;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #f3f2f2f2;
+            color: rgba(15, 15, 15, 0.862);
+            font-size: 20px;
+            transition: all 0.3s ease-in-out;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #121111e6;
+        }
+
+        input:focus {
+            background: #f4f2f2fe;
+            transform: scale(1.05);
+        }
+
+        /* Submit Button */
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #08eafaf3;
+            color: #f50707;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 0px 20px rgba(3, 203, 217, 0.5);
+        }
+
+        .btn:hover {
+            background: #03dfeff7;
+            transform: scale(1.1);
+            box-shadow: 0px 0px 30px rgba(0, 238, 255, 0.8);
+        }
+
+        /* Bus Details Styling */
+        .bus-details {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2); /* Slight transparent background */
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            display: none; /* Hide by default */
+        }
+
+        .bus-details p {
+            font-size: 18px;
+            color: white;
+            margin: 5px 0;
+        }
+
+        .bus-details p span {
+            font-weight: bold;
+            color: #f00c0cfd;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📍 Track Bus Location</h1>
+
+        <!-- Bus Input Form -->
+        <form id="bus-form">
+            <label for="bus-name">Bus Name:</label>
+            <input type="text" id="bus-name" placeholder="Enter Bus Name" required>
+
+            <label for="route-number">Route Number:</label>
+            <input type="text" id="route-number" placeholder="Enter Route Number" required>
+
+            <button type="button" class="btn" onclick="fetchBusLocation()">Track Bus</button>
+        </form>
+
+        <!-- Bus Details Display -->
+        <div class="bus-details" id="bus-details">
+            <p id="latitude"><span>Latitude:</span> <span id="latitude-value"></span></p>
+            <p id="longitude"><span>Longitude:</span> <span id="longitude-value"></span></p>
+            <p id="place"><span>Place:</span> <span id="place-value"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch bus location based on bus name and route number
+        function fetchBusLocation() {
+            const busName = document.getElementById('bus-name').value;
+            const routeNumber = document.getElementById('route-number').value;
+
+            if (!busName || !routeNumber) {
+                alert('Please provide both Bus Name and Route Number');
+                return;
+            }
+
+            // Call the backend API to fetch bus location
+            fetch(`/api/bus/location?name=${busName}&route_number=${routeNumber}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.latitude && data.longitude) {
+                        // Display the bus location details
+                        document.getElementById('latitude-value').textContent = data.latitude;
+                        document.getElementById('longitude-value').textContent = data.longitude;
+                        document.getElementById('place-value').textContent = data.place;
+
+                        // Show the bus details container
+                        document.getElementById('bus-details').style.display = 'block';
+                    } else {
+                        console.error('No location found for the bus.');
+                        alert('No bus location found!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching bus location:', error);
+                    alert('An error occurred while fetching bus location.');
+                });
+        }
+    </script>
+
+</body>
+</html>

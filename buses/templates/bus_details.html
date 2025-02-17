@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Details</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Background Animation */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background: url('https://ekamobility.com/wp-content/uploads/2025/01/EKA-Products_Page-05-scaled-1.jpg') no-repeat center center/cover;
+            background-size: cover;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Add dark overlay for better contrast */
+            opacity: 0.5;
+        }
+
+        /* Glassmorphism Container */
+        .container {
+            background: #fffffff2;
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px #fffffff6;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            z-index: 2;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: hsl(0, 100%, 50%);
+            
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 25px;
+            color: rgb(255, 0, 0);
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 10px;
+            background: #18d1e6;
+            color: #f90a0a;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            
+            font-size: 25px;
+        }
+
+        .btn:hover {
+            background: rgba(0, 238, 255, 0.4);
+            transform: scale(1.1);
+            
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1> Bus Details</h1>
+        <p><strong>ID:</strong> {{ bus.id }}</p>
+        <p><strong>Name:</strong> {{ bus.name }}</p>
+        <p><strong>Route Number:</strong> {{ bus.route_number }}</p>
+        <p><strong>Status:</strong> {{ bus.status }}</p>
+        
+        
+        <a href="/buses/" class="btn">🔙 Back to Bus List</a>
+    </div>
+
+</body>
+</html>
